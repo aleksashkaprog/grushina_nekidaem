@@ -1,11 +1,12 @@
 from django.contrib.auth.models import User
-from rest_framework.generics import ListAPIView
+from rest_framework import status
+from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import Blog, Post
-from .serializers import BlogSerializer, PostSerializer
+from .serializers import BlogSerializer, PostSerializer, UserSerializer
 
 
 class BlogListView(ListAPIView):
@@ -30,6 +31,7 @@ class SingleBlogView(APIView):
     """
     A view for one blog
     """
+
     def get(self, request, pk):
         """
         A method for get blog's data
@@ -104,6 +106,20 @@ class SinglePostView(APIView):
     """
     A view for one post
     """
+
+    def get(self, request, pk):
+        """
+        A method for get blog's data
+        :param request:
+        :param pk:
+        :return: Response
+        """
+        post = Post.objects.get(id=pk)
+        post_serializer = PostSerializer(post)
+        post_data = post_serializer.data
+
+        return Response(post_data)
+
     def post(self, request, pk):
         """
         A method for adding post to viewed
@@ -117,3 +133,14 @@ class SinglePostView(APIView):
         post_data = post_serializer.add_post_to_viewed(user, post)
 
         return Response(post_data)
+
+
+class UserCreateView(CreateAPIView):
+    """
+    A view for creating user
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)

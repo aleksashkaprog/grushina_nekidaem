@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from rest_framework import serializers
 
 from .models import Blog, Post, ViewedPost
@@ -62,3 +63,18 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = "__all__"
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """Serializer for User model."""
+
+    class Meta:
+        model = User
+        fields = ['username', 'password', 'email']
+
+    def create(self, validated_data):
+        """Creates a new instance of ArticleCommentary model."""
+        return User.objects.create(
+            username=validated_data['username'],
+            password=validated_data['password'],
+            email=validated_data['email'])
