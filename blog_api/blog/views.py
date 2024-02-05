@@ -86,7 +86,7 @@ class PostFeedView(APIView):
         """
         user = User.objects.get(id=pk)
         followed_blogs = Blog.objects.filter(follower__in=[user])
-        posts = Post.objects.filter(blog__in=followed_blogs).order_by('create_time')
+        posts = Post.objects.filter(blog__in=followed_blogs).order_by("-create_time")
         serializer = PostSerializer(posts, many=True)
 
         paginator = self.pagination_class()
