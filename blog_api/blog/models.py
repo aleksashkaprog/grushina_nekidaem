@@ -6,7 +6,7 @@ from django.dispatch import receiver
 
 class Blog(models.Model):
     """
-    Models of blog
+    A model of blog
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='blog', verbose_name='владелец')
     follower = models.ManyToManyField(User, related_name='followers',
@@ -14,13 +14,23 @@ class Blog(models.Model):
 
     @receiver(post_save, sender=User)
     def create_user_blog(sender, instance, created, **kwargs):
+        """
+        A method for automatic creating user's blog
+        :param instance:
+        :param created:
+        :param kwargs:
+        :return:
+        """
         if created:
             Blog.objects.create(user=instance)
+
+    def __str__(self):
+        return self.user.username
 
 
 class Post(models.Model):
     """
-    Model of post
+    A model of post
     """
     title = models.CharField(max_length=20, null=False, blank=False, verbose_name='заголовок')
     text = models.CharField(max_length=140, verbose_name='текст')
@@ -33,7 +43,7 @@ class Post(models.Model):
 
 class ViewedPost(models.Model):
     """
-    Model of viewed post
+    A model of viewed post
     """
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='users', verbose_name='пользователь')
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='posts', verbose_name='пост')

@@ -9,17 +9,30 @@ from .serializers import BlogSerializer, PostSerializer
 
 
 class BlogListView(ListAPIView):
+    """
+    A view for list of blogs
+    """
     queryset = Blog.objects.order_by('-id')
     serializer_class = BlogSerializer
 
     def get(self, request, *args, **kwargs):
+        """
+        A method for getting blogs
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
         return self.list(request, *args, **kwargs)
 
 
 class SingleBlogView(APIView):
+    """
+    A view for one blog
+    """
     def get(self, request, pk):
         """
-        Method for get blog's data
+        A method for get blog's data
         :param request:
         :param pk:
         :return: Response
@@ -32,7 +45,7 @@ class SingleBlogView(APIView):
 
     def patch(self, request, pk):
         """
-        Method for subscribing and unsubscribing on blog
+        A method for subscribing and unsubscribing on blog
         :param request:
         :param pk:
         :return: Response
@@ -49,17 +62,28 @@ class SingleBlogView(APIView):
             return Response({'success': f"Пользователь {user} успешно подписался на блог"})
 
 
-class ArticlePagePagination(PageNumberPagination):
-    """A class representing pagination for Article pages."""
+class PostFeedPagination(PageNumberPagination):
+    """
+    A class representing pagination for Post Feed.
+    """
     page_size = 10
     page_size_query_param = 'page_size'
     max_page_size = 500
 
 
 class PostFeedView(APIView):
-    pagination_class = ArticlePagePagination
+    """
+    A view for post feed
+    """
+    pagination_class = PostFeedPagination
 
     def get(self, request, pk):
+        """
+        A method for getting feed of posts
+        :param request:
+        :param pk:
+        :return: response
+        """
         user = User.objects.get(id=pk)
         followed_blogs = Blog.objects.filter(follower__in=[user])
         posts = Post.objects.filter(blog__in=followed_blogs).order_by('create_time')
@@ -74,3 +98,22 @@ class PostFeedView(APIView):
         serializer = PostSerializer(posts, many=True)
 
         return Response(serializer.data)
+
+
+class SinglePostView(APIView):
+    """
+    A view for one post
+    """
+    def post(self, request, pk):
+        """
+        A method for adding post to viewed
+        :param request:
+        :param pk:
+        :return: Response
+        """
+        post = Post.objects.get(id=pk)
+        post_serializer = PostSerializer(post)
+        user = request.user
+        post_data = post_serializer.add_post_to_viewed(user, post)
+
+        return Response(post_data)
