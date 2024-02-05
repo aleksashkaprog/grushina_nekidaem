@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Blog
+from .models import Blog, Post
 
 
 class BlogSerializer(serializers.ModelSerializer):
@@ -28,6 +28,17 @@ class BlogSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+    def get_posts(self, user):
+        user_blogs = user.blog.follower.all()
+        user_posts = Post.objects.filter(blog__in=user_blogs)
+        return user_posts
+
     class Meta:
         model = Blog
-        fields = ['id', 'user', 'follower']
+        fields = ["id", "user", "follower"]
+
+
+class PostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ['id', 'title', 'text', 'create_time', 'blog']
