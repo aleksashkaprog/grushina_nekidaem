@@ -5,7 +5,7 @@ from .views import BlogListView, SingleBlogView, PostFeedView, SinglePostView, U
 urlpatterns = [
     path("blogs/all", BlogListView.as_view(), name='blog-list'),
     path("blog/<int:pk>", SingleBlogView.as_view(), name='single-blog'),
-    path("feed/<int:pk>", PostFeedView.as_view(), name='feed'),
+    path("feed/", PostFeedView.as_view(), name='feed'),
     path("post/<int:pk>", SinglePostView.as_view(), name='single-post'),
     path("user/", UserCreateView.as_view(), name='user-create'),
 
