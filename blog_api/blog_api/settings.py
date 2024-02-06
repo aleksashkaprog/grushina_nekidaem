@@ -34,7 +34,7 @@ SECRET_KEY = env.str("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -93,8 +93,8 @@ DATABASES = {
         'NAME': env.str("DATABASE_NAME"),
         'USER': env.str("DATABASE_USER"),
         'PASSWORD': env.str("DATABASE_PASSWORD"),
-        'HOST': "0.0.0.0",
-        'PORT': "5432",
+        'HOST': "db",
+        'PORT': 5432,
     }
 }
 
@@ -137,8 +137,8 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CELERY_BROKER_URL = "redis://localhost:6379/0"
-CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+CELERY_BROKER_URL = "redis://0.0.0.0:6379/0"
+CELERY_RESULT_BACKEND = "redis://0.0.0.0:6379/0"
 CELERY_BEAT_SCHEDULE = {
     "send_daily_email": {
         "task": "blog.tasks.send_daily_email",

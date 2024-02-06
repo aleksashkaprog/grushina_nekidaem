@@ -4,7 +4,7 @@ from celery import Celery
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'blog_api.settings')
 
-app = Celery('blog')
+app = Celery('blog_api')
 
 app.config_from_object('django.conf:settings', namespace='CELERY')
 

@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=$DATABASE_NAME
+      - POSTGRES_USER=$DATABASE_USER
+      - POSTGRES_PASSWORD=$DATABASE_PASSWORD
+
+  redis:
+    image: redis:latest
+
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
+  celery:
+    build: .
+    command: celery -A blog_api worker --concurrency=4 -l info -Ofair
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+      - redis
+
+  beat:
+    build: .
+    command: celery -A blog_api beat -l info
+    volumes:
+      - .:/code
+    depends_on:
+      - db
+      - redis
+
